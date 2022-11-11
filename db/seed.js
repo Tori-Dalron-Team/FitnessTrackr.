@@ -72,9 +72,9 @@ async function createInitialUsers() {
 // Method: testDB
 async function testDB() {
     try {
-        console.log("Calling getAllUsers");
-        const users = await getAllUsers();
-        console.log("Result:", users);
+        console.log("Calling getUsers");
+        const user = await getUser();
+        console.log("Result:", user);
 
         // // create initial users test
         // console.log("Calling Create Initial Users")

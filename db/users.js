@@ -1,19 +1,20 @@
-const client = require("./client");
+const {client} = require("./index");
 const bcrypt = require("bcrypt");
 
 // database functions
 
 // user functions
-async function createUser({ id, username, password }) {
+async function createUser({ username, password }) {
   try {
-    const { rows: [ user ] } = await client.query(`
-      INSERT INTO users(id, username, password) 
-      VALUES($1, $2, $3) 
+    const result = await client.query(`
+      INSERT INTO users( username, password) 
+      VALUES($1, $2) 
       ON CONFLICT (username) DO NOTHING 
       RETURNING *;
-    `, [id, username, password]);
+    `, [username, password]
+    );
 
-    return user;
+    return result
   } catch (error) {
     throw error;
   }
@@ -56,7 +57,7 @@ async function getUserByUsername(username) {
     }
 }
 
-async function getUser({ username, password }) {
+async function getUser() {
   try {
     const { rows } = await client.query(`
       SELECT username, password
@@ -76,3 +77,10 @@ module.exports = {
   getUserById,
   getUserByUsername,
 }
+
+
+// Initial Data
+// INSERT INTO users( username, password) 
+// VALUES($1, $2,) 
+// ON CONFLICT (username) DO NOTHING 
+// RETURNING *;
