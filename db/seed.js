@@ -3,6 +3,22 @@ const client = require('./client');
 const { rebuildDB } = require('./seedData');
 
 // Step 2: User Methods
+    // Method: dropTables
+    async function dropTables() {
+        try {
+          console.log("Starting to drop tables...");
+      
+          await client.query(`
+            DROP TABLE IF EXISTS users;
+          `);
+      
+          console.log("Finished dropping tables!");
+        } catch (error) {
+          console.error("Error dropping tables!");
+          throw error;
+        }
+      }
+
     // Method: createTables
 async function createTables() {
   try {
@@ -19,22 +35,6 @@ async function createTables() {
     console.log("Finished building tables!");
   } catch (error) {
     console.error("Error building tables!");
-    throw error;
-  }
-}
-
-    // Method: dropTables
-async function dropTables() {
-  try {
-    console.log("Starting to drop tables...");
-
-    await client.query(`
-      DROP TABLE IF EXISTS users;
-    `);
-
-    console.log("Finished dropping tables!");
-  } catch (error) {
-    console.error("Error dropping tables!");
     throw error;
   }
 }
