@@ -5,7 +5,8 @@ const morgan = require('morgan');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { client } = require('./db/index');
-const { usersRouter } = require('./routes/users');
+const { apiRouter } = require('./routes/index')
+
 
 // Setting up a new express server instance
 const app = express();

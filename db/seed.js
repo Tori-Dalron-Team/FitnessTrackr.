@@ -8,6 +8,13 @@ const {
     getUserById,
     getUserByUsername
 } = require ('./users');
+const {
+  createActivity,
+  updateActivity,
+  getAllActivities, 
+  getActivitiesById,
+  getActivityByName
+} = require('./activities')
 
 // Step 2: User Methods
     // Method: dropTables
@@ -16,6 +23,7 @@ const {
           console.log("Starting to drop tables...");
       
           await client.query(`
+            DROP TABLE IF EXISTS activities;
             DROP TABLE IF EXISTS users;
           `);
       
@@ -36,6 +44,11 @@ async function createTables() {
         id SERIAL PRIMARY KEY,
         username varchar(255) UNIQUE NOT NULL,
         password varchar(255) NOT NULL
+      );
+      CREATE TABLE activities(
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) UNIQUE NOT NULL,
+        description TEXT NOT NULL
       );
     `);
 
@@ -67,7 +80,27 @@ async function createInitialUsers() {
         throw error;
         
     }
-}
+};
+
+async function createInitialActivities() {
+  console.log("Starting to create activities")
+  try {
+
+    await createActivity({
+      name: 'Running',
+      description: 'Run for 1 mile'
+    });
+
+    await createActivity({
+      name: 'Push Ups',
+      description: '3 sets of 10 push ups'
+    });
+
+    console.log("Finished creating activities");
+  } catch (error) {
+    console.log(error)
+  }
+};
 
 // Method: testDB
 async function testDB() {
@@ -75,6 +108,10 @@ async function testDB() {
         console.log("Calling getUsers");
         const user = await getUser();
         console.log("Result:", user);
+
+        console.log("Calling getAllActivities");
+        const activity = await getAllActivities();
+        console.log("Result:", activity)
 
         // // create initial users test
         // console.log("Calling Create Initial Users")
@@ -94,6 +131,7 @@ async function rebuildDB() {
       await dropTables();
       await createTables();
       await createInitialUsers();
+      await createInitialActivities();
     } catch (error) {
       console.log("Error during rebuildDB")
       throw error;
