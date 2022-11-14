@@ -9,13 +9,21 @@ usersRouter.use((req,res,next) => {
 
     next();
 });
-usersRouter.get('/', async (req,res) => {
+usersRouter.get('/', async (req,res,next) => {
     const users = await getUser();
     // console.log("this is all users", getAllUsers)
     res.send({
         users
     });
 });
+
+usersRouter.get('/profile', async (req, res, next) => {
+    const myUserInfo = await getUserbyUsername();
+    res.send({
+        myUserInfo
+    })
+})
+
 
 usersRouter.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
