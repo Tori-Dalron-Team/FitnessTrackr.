@@ -113,6 +113,14 @@ async function testDB() {
         const activity = await getAllActivities();
         console.log("Result:", activity)
 
+        console.log("Calling updateActivities", activity[0]);
+        const updateActivityResult = await updateActivity(activity[0].id, {
+          name: 'Joggin',
+          description: 'Lightly run for a mile'
+        });
+        console.log("Result:", updateActivityResult);
+
+
         // // create initial users test
         // console.log("Calling Create Initial Users")
         // const John

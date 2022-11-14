@@ -16,21 +16,24 @@ async function createActivity({name,description}) {
 };
 
 async function updateActivity(id, fields = {}) {
-    const { activity } = fields;
-    delete fields.tags;
+    const { name, description } = fields;
+    console.log("this is from the updated activity:", fields)
+    delete fields.id;
     const setString = Object.keys(fields).map(
         (key, index) => `"${ key }"=$${ index + 1 }`
         ).join(', ');
+        console.log("This is set string from updated activity:", setString)
     try {
         if(setString.length > 0) {
-            await client.query(`
+            const { rows } = await client.query(`
             UPDATE activities
             SET ${setString}
-            WHERE name=${name}, description=${description}
+            WHERE id=${id}
             RETURNING *;
             `, Object.values(fields));
-        }
-        if (activity === undefined) {
+            return rows;
+        } 
+        if (fields === undefined) {
             return await getActivitiesById(activityId)
         }
     } catch (error) {
