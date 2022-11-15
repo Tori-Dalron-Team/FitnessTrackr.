@@ -1,4 +1,4 @@
-const {client} = require("./index");
+const { client } = require("./index");
 const bcrypt = require("bcrypt");
 
 // database functions
@@ -62,7 +62,7 @@ async function getUser() {
     const { rows } = await client.query(`
       SELECT username, password
       FROM users;
-    `)
+    `);
     
     return rows;
   } catch (error) {
@@ -75,7 +75,7 @@ module.exports = {
   createUser,
   getUser,
   getUserById,
-  getUserByUsername,
+  getUserByUsername
 }
 
 

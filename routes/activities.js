@@ -6,9 +6,9 @@ const {
 	createActivity,
     getAllActivities,
     getActivitiesById,
-    getActivitiesByName,
+    getActivityByName,
 	updateActivity,
-} = require('../db');
+} = require('../db/activities');
 
 // API
     // getAllActivities-Correct
@@ -23,7 +23,7 @@ router.get("/", async (req, res, next) => {
   });
 
     // POST/createActivity-Correct
-router.post("/", requireUser, async (req, res, next) => {
+router.post("/", async (req, res, next) => {
     try {
         const activityBN = await getActivityByName(name);
   
@@ -45,7 +45,7 @@ router.post("/", requireUser, async (req, res, next) => {
   });
 
   // Patch: Updating Activities-Correct
-router.patch("/:activityId", requireUser, async (req, res, next) => {
+router.patch("/:activityId", async (req, res, next) => {
     try {
         const { activityId } = req.params;
         const { name, description } = req.body;
@@ -90,4 +90,4 @@ router.patch("/:activityId", requireUser, async (req, res, next) => {
   });
 
 // Export
-module.export = router;
+module.exports = {router};
