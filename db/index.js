@@ -1,5 +1,6 @@
 require('dotenv').config ();
 
+
 // This is where we will be building our pg.Client instance;
 const pg = require('pg');
 let client
@@ -20,4 +21,6 @@ if (process.env.user && process.env.password ) {
 
 module.exports = {
     client
+    // ...require('./users'),
+    // ...require('./activities')
 }
