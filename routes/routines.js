@@ -1,5 +1,17 @@
 const express =  require("express");
 const routineRouter = express.Router();
+const {
+    createRoutine,
+    getRoutineById,
+    getRoutinesWithoutActivities,
+    getAllRoutines,
+    getAllPublicRoutines,
+    getAllRoutinesByUser,
+    getPublicRoutinesByUser,
+    getPublicRoutinesByActivity,
+    destroyRoutine,
+    updateRoutine
+} = require('../db/routines');
 
 
 // GET /api/routines
