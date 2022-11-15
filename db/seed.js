@@ -14,7 +14,18 @@ const {
   getAllActivities, 
   getActivitiesById,
   getActivityByName
-} = require('./activities')
+} = require('./activities');
+const {
+  createRoutine,
+  getRoutineById,
+  getRoutinesWithoutActivities,
+  getAllRoutines,
+  getAllPublicRoutines,
+  getAllRoutinesByUser,
+  getPublicRoutinesByUser,
+  destroyRoutine
+
+} = require('./routines');
 
 // Step 2: User Methods
     // Method: dropTables
@@ -23,6 +34,7 @@ const {
           console.log("Starting to drop tables...");
       
           await client.query(`
+            DROP TABLE IF EXISTS routines;
             DROP TABLE IF EXISTS activities;
             DROP TABLE IF EXISTS users;
           `);
@@ -49,6 +61,13 @@ async function createTables() {
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) UNIQUE NOT NULL,
         description TEXT NOT NULL
+      );
+      CREATE TABLE routines (
+        id SERIAL PRIMARY KEY,
+        "creatorId" INTEGER REFERENCES users(Id),
+        "isPublic" BOOLEAN DEFAULT false,
+        name VARCHAR(255) UNIQUE NOT NULL,
+        goal TEXT NOT NULL
       );
     `);
 
@@ -102,6 +121,44 @@ async function createInitialActivities() {
   }
 };
 
+async function createInitialRoutines() {
+  console.log("starting to create routines...");
+
+  const routinesToCreate = [
+    {
+      creatorId: 1,
+      isPublic: false,
+      name: "Cardio Day",
+      goal: "Get that heart pumping by any means necessary.",
+    },
+    {
+      creatorId: 1,
+      isPublic: true,
+      name: "Arm Day",
+      goal: "Your arms will feel like noodles; Bench presses, pushups, and lifts.",
+    },
+    {
+      creatorId: 2,
+      isPublic: false,
+      name: "Leg Day",
+      goal: "Come here chicken leg, lets get buff; Squats, leg presses, & more",
+    },
+    {
+      creatorId: 2,
+      isPublic: true,
+      name: "Ab Day",
+      goal: "Let's get that six pack; Planks, pull ups, & more ",
+    },
+  ];
+
+  const routines = await Promise.all(
+    routinesToCreate.map((routine) => createRoutine(routine))
+  );
+  console.log("Routines Created: ", routines);
+  console.log("Finished creating Routines.");
+}
+
+
 // Method: testDB
 async function testDB() {
     try {
@@ -140,6 +197,7 @@ async function rebuildDB() {
       await createTables();
       await createInitialUsers();
       await createInitialActivities();
+      await createInitialRoutines();
     } catch (error) {
       console.log("Error during rebuildDB")
       throw error;
