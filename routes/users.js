@@ -89,6 +89,15 @@ usersRouter.post('/register', async (req, res, next) => {
     next({ name, message })
     } 
 });
+// GET /api/users/:username/routines
+usersRouter.get('/:username/routines', async (req,res,next) => {
+    try {
+        const routineByUser= await getPublicRoutinesByUser(createrId.isPublic)
+        res.send(routineByUser);
+    } catch (error) {
+        console.log(error)
+    }
+});
 
 module.exports = {
     usersRouter
