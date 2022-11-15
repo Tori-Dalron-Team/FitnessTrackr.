@@ -213,5 +213,3 @@ async function destroyRoutine(id) {
   };
 
   // Requirements
-
-//   updateroutine
