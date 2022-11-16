@@ -4,7 +4,7 @@ const {client} = require('./index');
 async function createRoutine({ creatorId, isPublic, name, goal }) {
     try {
       const {
-        rows: [routine],
+        rows: [routine]
       } = await client.query(
         `
         INSERT INTO routines("creatorId", "isPublic", "name", "goal") 
@@ -125,8 +125,8 @@ async function getPublicRoutinesByUser({ username }) {
       `,
         [username]
       );
-  
-      return attachActivitiesToRoutines(rows);
+    return rows;
+      // return attachActivitiesToRoutines(rows);
     } catch (error) {
       throw error;
     }
@@ -209,7 +209,8 @@ async function destroyRoutine(id) {
     getAllRoutinesByUser,
     getPublicRoutinesByUser,
     getPublicRoutinesByActivity,
-    destroyRoutine
+    destroyRoutine,
+    updateRoutine
   };
 
   // Requirements

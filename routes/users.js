@@ -3,6 +3,7 @@ const usersRouter = express.Router();
 const { getUser, createUser, getUserById, getUserByUsername } = require('../db/users');
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = process.env;
+const { getPublicRoutinesByUser } = require('../db/routines')
 
 usersRouter.use((req,res,next) => {
     console.log("A request is being made to /users");
@@ -88,6 +89,16 @@ usersRouter.post('/register', async (req, res, next) => {
         console.log("this is the message",message)
     next({ name, message })
     } 
+});
+// GET /api/users/:username/routines
+usersRouter.get('/:username/routines', async (req,res,next) => {
+    try {
+        const { username } = req.params
+        const routineByUser= await getPublicRoutinesByUser({username})
+        res.send(routineByUser);
+    } catch (error) {
+        console.log(error)
+    }
 });
 
 module.exports = {
