@@ -126,7 +126,7 @@ async function getPublicRoutinesByUser({ username }) {
         [username]
       );
   
-      return attachActivitiesToRoutines(rows);
+      return (rows);
     } catch (error) {
       throw error;
     }
@@ -209,6 +209,7 @@ async function destroyRoutine(id) {
     getAllRoutinesByUser,
     getPublicRoutinesByUser,
     getPublicRoutinesByActivity,
+    updateRoutine,
     destroyRoutine
   };
 

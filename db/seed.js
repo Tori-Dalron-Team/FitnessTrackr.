@@ -23,6 +23,7 @@ const {
   getAllPublicRoutines,
   getAllRoutinesByUser,
   getPublicRoutinesByUser,
+  updateRoutine,
   destroyRoutine
 
 } = require('./routines');
