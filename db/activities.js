@@ -15,14 +15,16 @@ async function createActivity({name,description}) {
     
 };
 
-async function updateActivity(id, fields = {}) {
-    const { name, description } = fields;
-    console.log("this is from the updated activity:", fields)
-    delete fields.id;
-    const setString = Object.keys(fields).map(
+async function updateActivity(activityToUpdate) {
+    console.log("this is the activtiy update", activityToUpdate);
+
+    const {id} = activityToUpdate;
+    delete activityToUpdate.id;
+    
+    const setString = Object.keys(activityToUpdate).map(
         (key, index) => `"${ key }"=$${ index + 1 }`
         ).join(', ');
-        console.log("This is set string from updated activity:", setString)
+        console.log("This is set string from updated activity:", setString);
     try {
         if(setString.length > 0) {
             const { rows } = await client.query(`
@@ -30,14 +32,12 @@ async function updateActivity(id, fields = {}) {
             SET ${setString}
             WHERE id=${id}
             RETURNING *;
-            `, Object.values(fields));
+            `, Object.values(activityToUpdate));
             return rows;
         } 
-        if (fields === undefined) {
-            return await getActivitiesById(activityId)
-        }
+    
     } catch (error) {
-        console.log(error)
+        console.error(error.detail)
     }
 };
 
@@ -55,27 +55,25 @@ async function getAllActivities() {
 
 async function getActivitiesById(activityId) {
     try {
-        const { rows: [name] } = await client.query(`
+        const { rows: [activity] } = await client.query(`
         SELECT * FROM activities
         WHERE id=${activityId};
         `);
-        if (!name) {
-            return null
-        };
-        return name;
+        return activity ? activity : console.error("no activity found")
+    
     } catch (error) {
-        console.log(error)
+        console.error(error.detail)
     }
 };
 
 async function getActivityByName(name) {
     try {
-        const { rows: [name] } = await client.query(`
+        const { rows: [activity] } = await client.query(`
         SELECT *
         FROM activities
         WHERE name=$1
         `, [name]);
-        return name;
+        return activity;
     } catch (error) {
         console.log(error)
     }
