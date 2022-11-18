@@ -99,7 +99,7 @@ async function getAllRoutines() {
   } catch (error) {
     throw error
   }
-  }
+}
 
 // FN getALlPublicRoutines
 async function getAllPublicRoutines() {
