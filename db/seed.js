@@ -27,6 +27,16 @@ const {
   destroyRoutine
 
 } = require('./routines');
+const {
+  getRoutineActivityById,
+  addActivityToRoutine,
+  getRoutineActivitiesByRoutine,
+  updateRoutineActivity,
+  destroyRoutineActivity,
+  canEditRoutineActivity,
+  createRoutineActivity
+  
+} = require('./routine_activities')
 
 // Step 2: User Methods
     // Method: dropTables
@@ -35,6 +45,7 @@ const {
           console.log("Starting to drop tables...");
       
           await client.query(`
+            DROP TABLE IF EXISTS "routine_activities";
             DROP TABLE IF EXISTS routines;
             DROP TABLE IF EXISTS activities;
             DROP TABLE IF EXISTS users;
@@ -63,12 +74,20 @@ async function createTables() {
         name VARCHAR(255) UNIQUE NOT NULL,
         description TEXT NOT NULL
       );
-      CREATE TABLE routines (
+      CREATE TABLE routines(
         id SERIAL PRIMARY KEY,
         "creatorId" INTEGER REFERENCES users(Id),
         "isPublic" BOOLEAN DEFAULT false,
         name VARCHAR(255) UNIQUE NOT NULL,
         goal TEXT NOT NULL
+      );
+      CREATE TABLE "routine_activities"(
+        id SERIAL PRIMARY KEY,
+        "routineId" INTEGER REFERENCES routines(id),
+        "activityId" INTEGER REFERENCES activities(id),
+        duration INTEGER,
+        count INTEGER,
+        UNIQUE ("routineId", "activityId")
       );
     `);
 
@@ -159,6 +178,26 @@ async function createInitialRoutines() {
   console.log("Finished creating Routines.");
 }
 
+async function createIntialRoutineActivity() {
+  try {
+    console.log("Starting to create inital Routine Activiy");
+
+    const {routineId, activityId, count, duration} = await createRoutineActivity(
+      1, 1, "20", "60"
+    );
+  
+    
+  
+    console.log("this is routine 1", routineOne)
+    await addActivityToRoutine({routineId, activityId, count, duration})
+    // await addActivityToRoutine(routineTwo.id, [sets, minutes])
+    
+    console.log("Finished creating routine activity")
+  } catch (error) {
+    console.log(error.detail)
+  }
+}
+
 
 // Method: testDB
 async function testDB() {
@@ -171,12 +210,18 @@ async function testDB() {
         const activity = await getAllActivities();
         console.log("Result:", activity)
 
-        console.log("Calling updateActivities", activity[0]);
-        const updateActivityResult = await updateActivity(activity[0].id, {
-          name: 'Joggin',
-          description: 'Lightly run for a mile'
+        console.log("Calling updateActivities", activity[1]);
+        const updateActivityResult = await updateActivity({
+          id: activity[1].id,
+          name: 'No Foot rubs for you',
+          description: 'Cuz you were jogging'
         });
         console.log("Result:", updateActivityResult);
+
+        console.log("Calling update routine activity")
+        const RA = {id:activity[0].id, count:15, duration:30}
+        const updatedRoutineActivityResult = await updateRoutineActivity(activity[0].id, RA);
+        console.log("Results", updatedRoutineActivityResult);
 
 
         // // create initial users test
@@ -199,6 +244,8 @@ async function rebuildDB() {
       await createInitialUsers();
       await createInitialActivities();
       await createInitialRoutines();
+      await createIntialRoutineActivity();
+      await testDB();
     } catch (error) {
       console.log("Error during rebuildDB")
       throw error;

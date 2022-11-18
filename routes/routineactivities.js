@@ -8,41 +8,44 @@ const {
     destroyRoutineActivity,
     getRoutineActivityById,
     updateRoutineActivity,
+    
 
-  } = require("../db/routine_activities");
+} = require("../db/routine_activities");
     // double check this when Tori is finished
 
 // PATCH /routine_activities/:routineActivityId (**)
-router.patch("/:routineActivityId", requireUser, async (req, res, next) => {
+routineActivitiesRouter.patch("/:routineActivityId",  async (req, res, next) => {
     const { count, duration } = req.body;
     const id = req.params.routineActivityId;
+    console.log("this is id", id)
+    console.log("this is req.user", req.user)
     try {
-        const routineActivity = await getRoutineActivityById(id);
-        const routine = await getRoutineById(routineActivity.routineId);
-
-        if (req.user.id !== routine.creatorId) {
+        // const routineActivity = await getRoutineActivityById(id);
+        // const routine = await getRoutineById(routineActivity.routineId);
+        const canEdit = await canEditRoutineActivity(id, req.user.id)
+        console.log("cant we edit?", canEdit)
+        if (!canEdit) {
+            console.log("we can not updated")
             next({ name: "Not allowed to Update! " });
 
         } else {
-            const updatedRoutineActivity = await updateRoutineActivity({
-                    // watch variable name (updated)
-                id, count, duration,
-            });
-
+            console.log("we can update")
+            const updatedRoutineActivity = await updateRoutineActivity(id, {count, duration});
+            
         if (updatedRoutineActivity) {
             res.send(updatedRoutineActivity);
         } else {
             next({ name: "Routine not available! " });
         }
-      }
-    } catch (error) {
-      next(error);
     }
-  }
+    } catch (error) {
+    console.error(error);
+    }
+}
 );
 
 // DELETE /routine_activities/:routineActivityId (**)
-router.delete('/:routineActivityId', async (req, res, next) => {
+routineActivitiesRouter.delete('/:routineActivityId', async (req, res, next) => {
     const { routineActivityId } = req.params;
 
     try {
@@ -61,4 +64,4 @@ router.delete('/:routineActivityId', async (req, res, next) => {
 );
 
 // Export
-module.exports = routineActivitiesRouter;
+module.exports = {routineActivitiesRouter};

@@ -41,7 +41,7 @@ usersRouter.post('/login', async (req, res, next) => {
     const user = await getUserByUsername(username);
 
     if (user && user.password == password) {
-        const newToken = jwt.sign(password, JWT_SECRET)
+        const newToken = jwt.sign({id:user.id, username}, JWT_SECRET, {expiresIn: "1w"})
         console.log(newToken)
         res.send({ message: "you're logged in!", token: newToken, success: true });
     } else {

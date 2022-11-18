@@ -49,41 +49,51 @@ router.patch("/:activityId", async (req, res, next) => {
     try {
         const { activityId } = req.params;
         const { name, description } = req.body;
+        
+        const updateRole = {id:activityId, ...req.body}
+        console.log("this is the update role", updateRole)
+        // const updateRole = {};
 
-        const updateRole = {};
+        // updateRole.id = activityId;
 
-        updateRole.id = activityId;
-
-        if (name) {
-            updateRole.name = name;
-        } if (description) {
-        updateRole.description = description;
+        // if (name) {
+        //     updateRole.name = name;
+        // } if (description) {
+        // updateRole.description = description;
     
-        } if (!(await getActivityById(activityId))) {
-            next({
-                name: "ActivityNotFoundError",
-                message: `Activity named ${activityId} not found`,
-                error: "Error! ",
-            });
-        } if (await getActivityByName(name)) {
-            next({
-                name: "ActivityAlreadyMade",
-                message: `An activity with the name ${name} already exists`,
-                error: "Error! ",
-            });
-        } else {
+      
+        if (!(await getActivitiesById(activityId))) {
+            let error = {name: "ActivityNotFoundError",
+            message: `Activity named ${activityId} not found`,
+            error: "Error! ",}
+            console.log("this is the error", error)
+            next(error);
+        } 
+        if (await getActivityByName(name)) {
+          let error = {
+            name: "ActivityAlreadyMade",
+            message: `An activity with the name ${name} already exists`,
+            error: "Error! ",
+        }
+        console.log("this is the error", error)
+            next(error);
+
+          } else {
             const response = await updateActivity(updateRole);
-            
+          
             if (response) {
             res.send(response);
             } else {
-            next({
+              let error = {
                 name: "NoFieldsToUpdate",
                 message: `Enter a name or description to update.`,
                 error: "Error! ",
-            });
+            }
+            console.log("this is the error", error)
+            next(error);
         }
-    }
+      }
+    
     } catch (error) {
       next(error);
     }
