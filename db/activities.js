@@ -27,13 +27,13 @@ async function updateActivity(activityToUpdate) {
         console.log("This is set string from updated activity:", setString);
     try {
         if(setString.length > 0) {
-            const { rows } = await client.query(`
+            const { rows: [activity] } = await client.query(`
             UPDATE activities
             SET ${setString}
             WHERE id=${id}
             RETURNING *;
             `, Object.values(activityToUpdate));
-            return rows;
+            return activity;
         } 
     
     } catch (error) {

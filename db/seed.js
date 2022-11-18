@@ -23,6 +23,7 @@ const {
   getAllPublicRoutines,
   getAllRoutinesByUser,
   getPublicRoutinesByUser,
+  updateRoutine,
   destroyRoutine
 
 } = require('./routines');
@@ -184,6 +185,7 @@ async function createIntialRoutineActivity() {
     const {routineId, activityId, count, duration} = await createRoutineActivity(
       1, 1, "20", "60"
     );
+  
     
   
     console.log("this is routine 1", routineOne)
@@ -208,12 +210,18 @@ async function testDB() {
         const activity = await getAllActivities();
         console.log("Result:", activity)
 
-        console.log("Calling updateActivities", activity[0]);
-        const updateActivityResult = await updateActivity(activity[0].id, {
-          name: 'Joggin',
-          description: 'Complain about running'
+        console.log("Calling updateActivities", activity[1]);
+        const updateActivityResult = await updateActivity({
+          id: activity[1].id,
+          name: 'No Foot rubs for you',
+          description: 'Cuz you were jogging'
         });
         console.log("Result:", updateActivityResult);
+
+        console.log("Calling update routine activity")
+        const RA = {id:activity[0].id, count:15, duration:30}
+        const updatedRoutineActivityResult = await updateRoutineActivity(activity[0].id, RA);
+        console.log("Results", updatedRoutineActivityResult);
 
 
         // // create initial users test

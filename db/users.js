@@ -23,19 +23,16 @@ async function createUser({ username, password }) {
 async function getUserById(userId) {
   try {
     const { rows: [ user ] } = await client.query(`
-      SELECT id, username, name
+      SELECT id, username
       FROM users
       WHERE id=$1;
     `,
-      [userID]
+      [userId]
     );
 
     if (!user) {
       return null
     }
-
-    user.posts = await getUserById(userId);
-
     return user;
   } catch (error) {
     throw error;

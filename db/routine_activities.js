@@ -7,22 +7,22 @@ const { getUserById } = require('./users');
 
 async function getRoutineActivityById(id) {
     try {
-            const { rows: [ id ] } = await client.query(`
-                SELECT id
+            const { rows: [ routineActivity ] } = await client.query(`
+                SELECT *
                 FROM "routine_activities"
                 WHERE id=$1;
                 `, [id]
             );
             
-                if (!id) {
+                if (!routineActivity) {
                 return null
                 }
             
-                id.routineId.activityId = await getRoutineActivityById(id);
+                
             
-                return id;
+                return routineActivity;
             } catch (error) {
-                throw error;
+                console.error(error);
             }
     };
 async function createRoutineActivity(  
@@ -77,15 +77,16 @@ async function getRoutineActivitiesByRoutine({id}) {
 };
 
 async function updateRoutineActivity (id, fields = {}) {
-    const { activityId, routineId, duration, count } = fields;
-    delete fields.id;
-    const setString = Object.keys(fields).map(
+    // const { activityId, routineId, duration, count } = fields;
+    if (fields.id) delete fields.id;
+    const keys = Object.keys(fields)
+    const setString = keys.map(
         (key, index) => `"${ key }"=$${ index + 1 }`
         ).join(', ');
     
     
         try {
-        if(setString.length > 0) {
+        if(!!keys.length) {
             const { rows } = await client.query(`
             UPDATE "routine_activities"
             SET ${ setString }
@@ -94,7 +95,7 @@ async function updateRoutineActivity (id, fields = {}) {
         `, Object.values(fields));
         return rows;
         }
-        if (fields === undefined) {
+        if (!keys.length) {
             return await getRoutineActivityById(id);
         }
     } catch(error){
@@ -115,8 +116,11 @@ async function destroyRoutineActivity(id) {
 
 async function canEditRoutineActivity(routineActivityId, userId) {
     try {
-        const confirmUser = await getUserById(id);
-        if (confirmUser == routineActivityId) {
+        const confirmUser = await getUserById(userId);
+        const routineActivityConfirm = await getRoutineActivityById(routineActivityId)
+        const routineConfirm = await getRoutineById(routineActivityConfirm.routineId)
+        console.log("this is confirm user and routine", confirmUser, routineConfirm)
+        if (confirmUser.id == routineConfirm.creatorId) {
             return true;
         } else { 
             return false;
