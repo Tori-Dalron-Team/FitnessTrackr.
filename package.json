@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed": "nodemon ./db/seed.js",
     "start": "node index.js",
-    "start:dev": "nodemon index.js"
+    "start:dev": "nodemon index.js",
+    "start-seed": "node db/seed.js && node index.js"
   },
   "repository": {
     "type": "git",
